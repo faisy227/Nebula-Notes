@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula Notes | Modern Note-Taking Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+   <link rel="stylesheet" href="assets/css/main.css">
+   <link rel="stylesheet" href="assets/css/modal.css">
+</head>
+<body class="work">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">N</div>
+                <h1>Nebula Notes</h1>
+            </div>
+
+            <button class="new-note-btn" id="openModalBtn">
+                <i class="icon icon-add"></i>
+                New Note
+            </button>
+
+            <div class="sidebar-menu">
+                <div class="menu-section">
+                    <h3>Menu</h3>
+                    <div class="menu-item">
+                        <i class="icon icon-notes"></i>
+                       <a href="index.html">All Notes</a>
+                        
+                    </div>
+                    
+                </div>
+
+                <div class="menu-section">
+                    <h3>Categories</h3>
+                    <div class="menu-item active">
+                        <i class="icon icon-work"></i>
+                        <a href="work.html">Work</a>
+                       
+                    </div>
+                    <div class="menu-item">
+                        <i class="icon icon-personal"></i>
+                        <a href="personal.html">Personal</a>
+                       
+                    </div>
+                    <div class="menu-item">
+                        <i class="icon icon-ideas"></i>
+                        <a href="idea.html">Ideas</a>
+                    </div>
+                </div>
+
+              
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="header-left">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="icon icon-menu"></i>
+                    </button>
+                    <div class="search-bar">
+                        <i class="icon icon-search"></i>
+                        <input type="text" placeholder="Search notes...">
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-icon">
+                        <i class="icon icon-notification"></i>
+                    </div>
+                    <div class="header-icon">
+                        <i class="icon icon-settings"></i>
+                    </div>
+                    <div class="user-avatar">JD</div>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <div class="content-header">
+                    <h1 class="content-title">Work Notes</h1>
+                    <div class="view-options">
+                        <div class="view-option active">Grid</div>
+                        <div class="view-option">List</div>
+                        <div class="view-option">Compact</div>
+                    </div>
+                </div>
+
+                   <!-- Notes Grid -->
+                <div class="notes-grid">
+                    
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+
+     <!-- Modal -->
+    <div class="modal" id="addNoteModal">
+        <div class="modal-header">
+            <h2 class="modal-title">Add New Notes</h2>
+            <div class="modal-close" id="closeModalBtn">
+                <i class="icon icon-close"></i>
+            </div>
+        </div>
+        
+        <div class="modal-body">
+            <form id="noteForm">
+                <div class="form-group">
+                    <label for="noteTitle" class="form-label">Notes Title</label>
+                    <input type="text" id="noteTitle" class="form-control" placeholder="e.g. Weekly Family Meals" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="noteContent" class="form-label">Notes Details</label>
+                    <textarea id="noteContent" class="form-control" placeholder="Enter your Notes details here..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Special Options</label>
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="featuredNote">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Featured Notes</span>
+                        </div>
+                        
+                        <!-- <div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="pinnedNote">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Pin to Top</span>
+                        </div> -->
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <div class="category-selector">
+                        <button type="button" class="category-btn active" data-category="work">
+                            <i class="icon icon-work"></i> Work
+                        </button>
+                        <button type="button" class="category-btn" data-category="personal">
+                            <i class="icon icon-personal"></i> Personal
+                        </button>
+                        <button type="button" class="category-btn" data-category="ideas">
+                            <i class="icon icon-ideas"></i> Ideas
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancelBtn">
+                Cancel
+            </button>
+            <button type="submit" form="noteForm" class="btn btn-primary">
+                Save Notes
+            </button>
+        </div>
+    </div>
+    <script src="assets/js/app.js"></script>
+    <script src="assets/js/modal.js"></script>
+    <!-- Minimal JavaScript only for sidebar toggle -->
+    <script>
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.toggle('open');
+        });
+        document.getElementById('sidebar').addEventListener("click", () => {
+            document.getElementById('sidebar').classList.toggle('open');
+            
+        })
+    </script>
+</body>
+</html>
