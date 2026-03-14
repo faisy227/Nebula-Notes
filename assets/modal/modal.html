@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nebula Notes | Add New Note</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Syne', sans-serif;
+        }
+
+        :root {
+            --primary: #6c5ce7;
+            --primary-dark: #5649c0;
+            --secondary: #00cec9;
+            --dark: #2d3436;
+            --light: #f5f6fa;
+            --gray: #dfe6e9;
+            --success: #00b894;
+            --warning: #fdcb6e;
+            --danger: #d63031;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --note-card-width: 320px;
+            --transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+            padding: 40px;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(108, 92, 231, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: var(--primary);
+            border: 1px solid var(--gray);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--gray);
+        }
+
+        .btn-icon {
+            margin-right: 8px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 600px;
+            max-width: 100%;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+            z-index: 1001;
+            transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            right: 0;
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background-color: white;
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .modal-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background-color: var(--gray);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--gray);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gray);
+            transition: var(--transition);
+            border-radius: 34px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: var(--transition);
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-label {
+            margin-left: 10px;
+            font-weight: 500;
+            vertical-align: middle;
+        }
+
+        /* Category Selector */
+        .category-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .category-btn {
+            padding: 8px 16px;
+            border-radius: 20px;
+            background-color: white;
+            border: 1px solid var(--gray);
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+
+        .category-btn i {
+            margin-right: 6px;
+        }
+
+        .category-btn:hover {
+            background-color: var(--gray);
+        }
+
+        .category-btn.active {
+            background-color: rgba(108, 92, 231, 0.1);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            padding: 20px;
+            border-top: 1px solid var(--gray);
+            margin-top: 20px;
+            position: sticky;
+            bottom: 0;
+            background-color: white;
+        }
+
+        /* Icons (using Unicode as we can't use Font Awesome) */
+        .icon {
+            font-style: normal;
+            font-family: sans-serif;
+        }
+
+        .icon-add:after {
+            content: "+";
+        }
+        .icon-close:after {
+            content: "×";
+        }
+        .icon-work:after {
+            content: "💼";
+        }
+        .icon-personal:after {
+            content: "👤";
+        }
+        .icon-ideas:after {
+            content: "💡";
+        }
+        .icon-star:after {
+            content: "⭐";
+        }
+        .icon-pin:after {
+            content: "📌";
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modal {
+                width: 100%;
+            }
+            
+            body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Button to Open Modal -->
+    <button class="btn btn-primary" id="openModalBtn">
+        <i class="icon icon-add btn-icon"></i>
+        Add New Notes
+    </button>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+
+    <!-- Modal -->
+    <div class="modal" id="addNoteModal">
+        <div class="modal-header">
+            <h2 class="modal-title">Add New Notes</h2>
+            <div class="modal-close" id="closeModalBtn">
+                <i class="icon icon-close"></i>
+            </div>
+        </div>
+        
+        <div class="modal-body">
+            <form id="noteForm">
+                <div class="form-group">
+                    <label for="noteTitle" class="form-label">Notes Title</label>
+                    <input type="text" id="noteTitle" class="form-control" placeholder="e.g. Weekly Family Meals" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="noteContent" class="form-label">Notes Details</label>
+                    <textarea id="noteContent" class="form-control" placeholder="Enter your Notes details here..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Special Options</label>
+                    <div style="display: flex; align-items: center; gap: 20px;">
+                        <div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="featuredNote">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Featured Notes</span>
+                        </div>
+                        
+                        <div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="pinnedNote">
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span class="toggle-label">Pin to Top</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Category</label>
+                    <div class="category-selector">
+                        <button type="button" class="category-btn active" data-category="work">
+                            <i class="icon icon-work"></i> Work
+                        </button>
+                        <button type="button" class="category-btn" data-category="personal">
+                            <i class="icon icon-personal"></i> Personal
+                        </button>
+                        <button type="button" class="category-btn" data-category="ideas">
+                            <i class="icon icon-ideas"></i> Ideas
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="cancelBtn">
+                Cancel
+            </button>
+            <button type="submit" form="noteForm" class="btn btn-primary">
+                Save Notes
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        const openModalBtn = document.getElementById('openModalBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modal = document.getElementById('addNoteModal');
+        
+        // Open modal
+        openModalBtn.addEventListener('click', () => {
+            modalOverlay.classList.add('active');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        // Close modal (all methods)
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', closeModal);
+        
+        // Category selection
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+        
+        // Form submission
+        document.getElementById('noteForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Get form values
+            const title = document.getElementById('noteTitle').value;
+            const content = document.getElementById('noteContent').value;
+            const isFeatured = document.getElementById('featuredNote').checked;
+            const isPinned = document.getElementById('pinnedNote').checked;
+            const category = document.querySelector('.category-btn.active').dataset.category;
+            
+            // Here you would typically send this data to a server
+            console.log({
+                title,
+                content,
+                isFeatured,
+                isPinned,
+                category
+            });
+            
+            // Show success message (in a real app, you'd handle this properly)
+            alert('Notes saved successfully!');
+            closeModal();
+            
+            // Reset form
+            e.target.reset();
+            document.querySelector('.category-btn[data-category="work"]').click();
+        });
+    </script>
+</body>
+</html>
